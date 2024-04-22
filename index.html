@@ -19,15 +19,19 @@
     }
     
     var userId = window.Telegram.WebApp.initDataUnsafe.user.id;
+    var first_name= window.Telegram.WebApp.initDataUnsafe.user.first_name;
+    var last_name= window.Telegram.WebApp.initDataUnsafe.user.last_name;
+    var username= window.Telegram.WebApp.initDataUnsafe.user.username;
     var textField = document.getElementById('telegramIdField');
-    textField.innerHTML = userId;
+   
+    textField.innerHTML = userId+'  |' + first_name +' '+ last_name + +' | ' + username ;
 
   });
 
 
 </script>
 
-  <div>id6=</div><span id="telegramIdField"></span>
+  <div>Info:</div><span id="telegramIdField"></span>
 
 </body>
 </html>
