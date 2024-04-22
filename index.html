@@ -26,12 +26,17 @@
    
     textField.innerHTML = userId+ ' | ' + first_name + ' ' + last_name +' |  @' + username ;
 
+    function closeapp(){
+      window.Telegram.WebApp.close();
+    }
+
   });
 
 
 </script>
 
   <div>Your info:</div><span id="telegramIdField"></span>
+  <button onclick="closeapp()">закрыть</button>
 
 </body>
 </html>
