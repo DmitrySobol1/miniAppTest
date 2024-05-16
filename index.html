@@ -1,46 +1,456 @@
+
+<!-- ПРОЕКТ С 1м столбцом -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Document3</title>
   
 </head>
+
 <style>
-  .redcolor {
-    color: red;
-    font-weight: bold;
+  .line {
+    /* border: 1px solid black; */
+    display: flex;
+    width: 200px;
+    height: 200px;
+    /* background-color: lightblue; */
+    margin:5px;
+  }
+
+  .tovar {
+    /* border: 1px solid black; */
+    width: 150px;
+    height: 150px;
+    /* background-color: lightsalmon; */
+    margin:15px;
+    text-align: center;
+  }
+
+  .name {
+    color:red;
+  }
+
+  .img {
+    width: 130px;
+    height: 130px;
+    border-radius: 10px;
+  }
+
+  .addbuttons {
+   border-radius: 10px;
 
   }
+
+  .counterDiv {
+    display: flex;
+  }
+
+  
 </style>
+
+
 <body>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+
+<div>
+  <button onclick="showvegetable()">овощи2</button>
+  <button onclick="showfruits()">фрукты</button>
+  <button onclick="showall()">показать все</button>
+  
+
+</div>
+
+
+</body>
+
 
 <script>
 
-  document.addEventListener('DOMContentLoaded', function() {
-    // Расширение веб-приложения Telegram, если доступно
-    if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.expand();
-        
-    }
+    // ловим нажатие кнопки "добавить" и меняем на счетчик
+    document.body.addEventListener('click', function(event) {
+    if (event.target.matches('.addbuttons')) { // Проверяем, является ли элемент кнопкой с классом .addbuttons
     
-    var userId = window.Telegram.WebApp.initDataUnsafe.user.id;
-    var first_name= window.Telegram.WebApp.initDataUnsafe.user.first_name;
-    var last_name= window.Telegram.WebApp.initDataUnsafe.user.last_name;
-    var username= window.Telegram.WebApp.initDataUnsafe.user.username;
-    var textField = document.getElementById('telegramIdField');
-   
-    textField.innerHTML = userId+ ' | ' + first_name + ' ' + last_name +' |  @' + username ;
+    var counterDiv = document.createElement('div')
+    counterDiv.className = 'counterDiv';
+    counterDiv.id = 'counterDiv'+event.target.id;
+    
+    var plus_button = document.createElement('button');
+    plus_button.className = 'plusbuttons';
+    plus_button.textContent = '+';
+    plus_button.id = 'plus'+event.target.id;
+    counterDiv.appendChild(plus_button); 
 
+    var counter = document.createElement('span');
+    var counterNum = 1;
+    counter.id = 'counter'+event.target.id;
+    counter.innerText = counterNum;
+    counterDiv.appendChild(counter); 
+
+    var minus_button = document.createElement('button');
+    minus_button.className = 'minusbuttons';
+    minus_button.textContent = '-';
+    minus_button.id = 'minus'+event.target.id;
+    counterDiv.appendChild(minus_button); 
+
+    // Заменяем старый элемент новым
+    if (event.target) {
+    event.target.replaceWith(counterDiv);
+    }
+    }
+    });
+
+
+    // ловим нажатие кнопки "плюс" 
+    document.body.addEventListener('click', function(event) {
+    if (event.target.matches('.plusbuttons')) { 
     
-  });
+    
+    let originalString = event.target.id; 
+    let stringToReplace = "plus"; 
+    let replacementString = "counter";
+    let newString = originalString.replace(stringToReplace, replacementString);
+    
+    var counterSpan = document.getElementById(newString);
+    var counterValue = counterSpan.innerText;
+    
+    var counterNew = parseInt(counterValue)+1;
+    counterSpan.innerText = counterNew;
+
+    }; 
+    });  
+
+    // ловим нажатие кнопки "минус" 
+    document.body.addEventListener('click', function(event) {
+    if (event.target.matches('.minusbuttons')) { 
+    
+    
+    let originalString = event.target.id; 
+    let stringToReplace = "minus"; 
+    let replacementString = "counter";
+    let newString = originalString.replace(stringToReplace, replacementString);
+    
+    var counterSpan = document.getElementById(newString);
+    var counterValue = counterSpan.innerText;
+    
+    counterValue = parseInt(counterValue);
+
+    if (counterValue == 1){
+        // удаляем счетчик и меняем на кнопку "добавить"
+        var Tovar_button = document.createElement('button');
+        Tovar_button.className = 'addbuttons';
+        Tovar_button.textContent = 'добавить';
+        
+        let originalString = event.target.id; 
+        let stringToReplace = "minus"; 
+        let replacementString = "counterDiv";
+        let newString = originalString.replace(stringToReplace, replacementString);
+
+        var counterDiv = document.getElementById(newString);
+
+        // Заменяем старый элемент новым
+         if (counterDiv) {
+            counterDiv.replaceWith(Tovar_button);
+        }
+            
+
+    } else {
+    var counterNew = counterValue-1;
+    counterSpan.innerText = counterNew;
+      }
+    }; 
+    });  
+
+   
+
+    // Получаем товары из БД
+    fetch('https://api.baserow.io/api/database/rows/table/287613/?user_field_names=true', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Token mBWaX1jGTuMGhmfdhq5FdX2JGyz4aYeu'
+      }
+    })
+    .then(response => {
+    // Обработка ответа
+      return response.json(); // Разрешаем Promise и возвращаем его
+    })
+    .then(data => {
+    
+    for (i=0 ; i < data.count ; i=i+1 ){
+
+            
+      var newLine = document.createElement('div'); 
+      newLine.className = 'line';
+      document.body.appendChild(newLine);
+
+         var firstColumn = document.createElement('div');
+         newLine.appendChild(firstColumn);
+
+            var Tovar_img = document.createElement('img');
+            Tovar_img.className = 'img';
+            Tovar_img.src=data.results[i].фото;
+            firstColumn.appendChild(Tovar_img); 
+
+     
+         var secondColumn = document.createElement('div');
+         newLine.appendChild(secondColumn);
+
+            var Tovar_name = document.createElement('div');
+            secondColumn.appendChild(Tovar_name);
+            Tovar_name.innerText = data.results[i].название;
+
+            var Tovar_price = document.createElement('div');
+            secondColumn.appendChild(Tovar_price);
+            Tovar_price.innerText = data.results[i].цена;
+
+            var Tovar_button = document.createElement('button');
+            Tovar_button.className = 'addbuttons';
+            Tovar_button.textContent = 'добавить';
+            Tovar_button.id = data.results[i].id;
+            secondColumn.appendChild(Tovar_button);
+            // Tovar_button.addEventListener('click', function() {
+            // console.log(this.id); // Выводим текст кнопки в консоль
+            // });
+
+    }
+    })
+    .catch(error => {
+    // Обработка ошибки
+    });
+
+
+
+
+
+
+  
+ function showall(){
+    // Обновить страницу
+location.reload();
+
+ } 
+
+
+function showvegetable(){
+
+    fetch('https://api.baserow.io/api/database/rows/table/287613/?user_field_names=true', {
+method: 'GET',
+headers: {
+  'Content-Type': 'application/json',
+  'Authorization': 'Token mBWaX1jGTuMGhmfdhq5FdX2JGyz4aYeu'
+}
+})
+.then(response => {
+// Обработка ответа
+return response.json(); // Разрешаем Promise и возвращаем его
+})
+.then(data => {
+// console.log(data); // Здесь вы можете использовать данные JSON
+// Удалить все элементы со страницы
+const elements = document.querySelectorAll('.line');
+elements.forEach(element => element.remove());
+
+var array = [];
+
+for (i=0 ; i < data.count ; i=i+1){
+    
+    if (data.results[i].type.value=='овощ') {
+        var object = {
+            name: data.results[i].название,
+            price: data.results[i].цена,
+            img: data.results[i].фото,
+            id: data.results[i].id
+        }
+      
+    array.push(object);
+   
+} 
+}
+
+for (i=0 ; i < array.length; i=i+1){
+   
+   var newLine = document.createElement('div'); 
+      newLine.className = 'line';
+      document.body.appendChild(newLine);
+
+         var firstColumn = document.createElement('div');
+         newLine.appendChild(firstColumn);
+
+            var Tovar_img = document.createElement('img');
+            Tovar_img.className = 'img';
+            Tovar_img.src=array[i].img;
+            firstColumn.appendChild(Tovar_img); 
+
+     
+         var secondColumn = document.createElement('div');
+         newLine.appendChild(secondColumn);
+
+            var Tovar_name = document.createElement('div');
+            secondColumn.appendChild(Tovar_name);
+            Tovar_name.innerText = array[i].name;
+
+            var Tovar_price = document.createElement('div');
+            secondColumn.appendChild(Tovar_price);
+            Tovar_price.innerText = array[i].price;
+
+            var Tovar_button = document.createElement('button');
+            Tovar_button.className = 'addbuttons';
+            Tovar_button.innerHTML = 'добавить';
+            Tovar_button.id = array[i].id;
+            secondColumn.appendChild(Tovar_button);
+
+}
+
+})
+.catch(error => {
+// Обработка ошибки
+});
+
+}
+
+
+function showfruits() {
+    fetch('https://api.baserow.io/api/database/rows/table/287613/?user_field_names=true', {
+method: 'GET',
+headers: {
+  'Content-Type': 'application/json',
+  'Authorization': 'Token mBWaX1jGTuMGhmfdhq5FdX2JGyz4aYeu'
+}
+})
+.then(response => {
+// Обработка ответа
+return response.json(); // Разрешаем Promise и возвращаем его
+})
+.then(data => {
+// console.log(data); // Здесь вы можете использовать данные JSON
+// Удалить все элементы со страницы
+const elements = document.querySelectorAll('.line');
+elements.forEach(element => element.remove());
+
+var array = [];
+
+for (i=0 ; i < data.count ; i=i+1){
+    
+    if (data.results[i].type.value=='фрукт') {
+        var object = {
+            name: data.results[i].название,
+            price: data.results[i].цена,
+            img: data.results[i].фото,
+            id: data.results[i].id
+        }
+      
+    array.push(object);
+
+} 
+}
+
+for (i=0 ; i < array.length; i=i+1){
+   
+   var newLine = document.createElement('div'); 
+      newLine.className = 'line';
+      document.body.appendChild(newLine);
+
+         var firstColumn = document.createElement('div');
+         newLine.appendChild(firstColumn);
+
+            var Tovar_img = document.createElement('img');
+            Tovar_img.className = 'img';
+            Tovar_img.src=array[i].img;
+            firstColumn.appendChild(Tovar_img); 
+
+     
+         var secondColumn = document.createElement('div');
+         newLine.appendChild(secondColumn);
+
+            var Tovar_name = document.createElement('div');
+            secondColumn.appendChild(Tovar_name);
+            Tovar_name.innerText = array[i].name;
+
+            var Tovar_price = document.createElement('div');
+            secondColumn.appendChild(Tovar_price);
+            Tovar_price.innerText = array[i].price;
+
+            var Tovar_button = document.createElement('button');
+            Tovar_button.className = 'addbuttons';
+            Tovar_button.innerHTML = 'добавить';
+            Tovar_button.id = array[i].id;
+            secondColumn.appendChild(Tovar_button);
+}
+
+})
+.catch(error => {
+// Обработка ошибки
+});
+
+}
+
+function check(){
+
+    fetch('https://api.telegram.org/bot7062021483:AAFE5VSb3IMG04imOet-r5vzV43JNSYBuSk/sendMessage?chat_id=412697670&text=hee', {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    }).then(res=>{
+        console.log(res.json())
+    })
+
+}
+
+function checkSend(){
+fetch('https://app.leadteh.ru/api/v1/sendMessage?', {
+     method: 'POST',
+     mode: 'no-cors',
+    // specify id if you want to edit existing objects
+    body: JSON.stringify({
+        
+        'contact_id':23271428,
+        'text':'hee'
+
+    }),
+    headers: {
+        'X-Requested-With':'XMLHttpRequest'
+    },
+    }).then(res=>{
+        console.log(res.json())
+    })
+}
+
+function checkSend2() {
+    fetch('https://app.leadteh.ru/api/v1/sendMessage?B', {
+        method: 'POST',
+        mode: 'no-cors', // это не позволит вам прочитать ответ, уберите эту строку
+        body: JSON.stringify({
+            'api_token':'dFxFwhqs7ubr6MMCBTXhp3EseaEPYlfuMis9rMx6pf50aLmBaP2GMjDynPxB',
+            'contact_id': 23271428,
+            'text': 'hee'
+        }),
+        headers: {
+            'Content-Type': 'application/json', // Обязательно указываем тип контента
+            'X-Requested-With':'XMLHttpRequest' // Удалите, если это не требование API
+        },
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return res.json(); // Вернет промис
+    })
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+
 
 
 </script>
 
-  <div>Your info:</div><span id="telegramIdField" class="redcolor"></span>
-  
-
-</body>
+<button onclick="checkSend2()">CHECK LT3</button>
 </html>
